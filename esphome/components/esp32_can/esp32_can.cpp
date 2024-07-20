@@ -13,10 +13,6 @@ namespace esphome {
 namespace esp32_can {
 
 static const char *const TAG = "esp32_can";
-static twai_handle_t twai_bus_0;
-#if defined(USE_ESP32_VARIANT_ESP32C6)
-static twai_handle_t twai_bus_1;
-#endif
 
 static bool get_bitrate(canbus::CanSpeed bitrate, twai_timing_config_t *t_config) {
   switch (bitrate) {
@@ -71,11 +67,6 @@ static bool get_bitrate(canbus::CanSpeed bitrate, twai_timing_config_t *t_config
 }
 
 bool ESP32Can::setup_internal() {
-  twai_handle_t twai_bus_ = &twai_bus_0;
-#if defined(USE_ESP32_VARIANT_ESP32C6)
-  if(this->controller_id_ == 1) twai_bus_ = &twai_bus_1;
-#endif
-
   twai_general_config_t g_config =
       TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t) this->tx_, (gpio_num_t) this->rx_, TWAI_MODE_NORMAL);
   twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
@@ -89,14 +80,14 @@ bool ESP32Can::setup_internal() {
 
   // Install TWAI driver
   g_config.controller_id = this->controller_id_;
-  if (twai_driver_install_v2(&g_config, &t_config, &f_config, &twai_bus_) != ESP_OK) {
+  if (twai_driver_install_v2(&g_config, &t_config, &f_config, &this->bus) != ESP_OK) {
     // Failed to install driver
     this->mark_failed();
     return false;
   }
 
   // Start TWAI driver
-  if (twai_start_v2(twai_bus_) != ESP_OK) {
+  if (twai_start_v2(this->bus) != ESP_OK) {
     // Failed to start driver
     this->mark_failed();
     return false;
@@ -105,11 +96,6 @@ bool ESP32Can::setup_internal() {
 }
 
 canbus::Error ESP32Can::send_message(struct canbus::CanFrame *frame) {
-  twai_handle_t twai_bus_ = &twai_bus_0;
-#if defined(USE_ESP32_VARIANT_ESP32C6)
-  if(this->controller_id_ == 1) twai_bus_ = &twai_bus_1;
-#endif
-
   if (frame->can_data_length_code > canbus::CAN_MAX_DATA_LENGTH) {
     return canbus::ERROR_FAILTX;
   }
@@ -131,7 +117,7 @@ canbus::Error ESP32Can::send_message(struct canbus::CanFrame *frame) {
     memcpy(message.data, frame->data, frame->can_data_length_code);
   }
 
-  if (twai_transmit_v2(twai_bus_, &message, pdMS_TO_TICKS(1000)) == ESP_OK) {
+  if (twai_transmit_v2(this->bus, &message, pdMS_TO_TICKS(1000)) == ESP_OK) {
     return canbus::ERROR_OK;
   } else {
     return canbus::ERROR_ALLTXBUSY;
@@ -139,13 +125,9 @@ canbus::Error ESP32Can::send_message(struct canbus::CanFrame *frame) {
 }
 
 canbus::Error ESP32Can::read_message(struct canbus::CanFrame *frame) {
-  twai_handle_t twai_bus_ = &twai_bus_0;
-#if defined(USE_ESP32_VARIANT_ESP32C6)
-  if(this->controller_id_ == 1) twai_bus_ = &twai_bus_1;
-#endif
   twai_message_t message;
 
-  if (twai_receive_v2(twai_bus_, &message, 0) != ESP_OK) {
+  if (twai_receive_v2(this->bus, &message, 0) != ESP_OK) {
     return canbus::ERROR_NOMSG;
   }
 
