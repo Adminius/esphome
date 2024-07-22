@@ -13,7 +13,6 @@ class ESP32Can : public canbus::Canbus {
  public:
   void set_rx(int rx) { rx_ = rx; }
   void set_tx(int tx) { tx_ = tx; }
-  void set_controller_id(int controller_id) { this->controller_id_ = controller_id; };
   ESP32Can(){};
 
  protected:
