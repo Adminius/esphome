@@ -3,11 +3,11 @@
 #ifdef USE_ARDUINO
 
 #include "esphome/components/network/util.h"
+#include "esphome/components/watchdog/watchdog.h"
+
 #include "esphome/core/application.h"
 #include "esphome/core/defines.h"
 #include "esphome/core/log.h"
-
-#include "watchdog.h"
 
 namespace esphome {
 namespace http_request {
@@ -113,11 +113,10 @@ std::shared_ptr<HttpContainer> HttpRequestArduino::start(std::string url, std::s
     return nullptr;
   }
 
-  if (container->status_code < 200 || container->status_code >= 300) {
+  if (!is_success(container->status_code)) {
     ESP_LOGE(TAG, "HTTP Request failed; URL: %s; Code: %d", url.c_str(), container->status_code);
     this->status_momentary_error("failed", 1000);
-    container->end();
-    return nullptr;
+    // Still return the container, so it can be used to get the status code and error message
   }
 
   int content_length = container->client_.getSize();

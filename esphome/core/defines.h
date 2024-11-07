@@ -28,6 +28,8 @@
 #define USE_DATETIME_DATETIME
 #define USE_DATETIME_TIME
 #define USE_DEEP_SLEEP
+#define USE_DISPLAY
+#define USE_ESP32_IMPROV_STATE_CALLBACK
 #define USE_EVENT
 #define USE_FAN
 #define USE_GRAPH
@@ -39,13 +41,25 @@
 #define USE_LOCK
 #define USE_LOGGER
 #define USE_LVGL
+#define USE_LVGL_ANIMIMG
+#define USE_LVGL_BINARY_SENSOR
+#define USE_LVGL_BUTTONMATRIX
+#define USE_LVGL_DROPDOWN
 #define USE_LVGL_FONT
 #define USE_LVGL_IMAGE
+#define USE_LVGL_KEY_LISTENER
+#define USE_LVGL_KEYBOARD
+#define USE_LVGL_ROLLER
+#define USE_LVGL_ROTARY_ENCODER
+#define USE_LVGL_TOUCHSCREEN
+#define USE_MD5
 #define USE_MDNS
 #define USE_MEDIA_PLAYER
 #define USE_MQTT
+#define USE_NETWORK
 #define USE_NEXTION_TFT_UPLOAD
 #define USE_NUMBER
+#define USE_ONLINE_IMAGE_PNG_SUPPORT
 #define USE_OTA
 #define USE_OTA_PASSWORD
 #define USE_OTA_STATE_CALLBACK
@@ -66,13 +80,12 @@
 #define USE_VALVE
 #define USE_WIFI
 #define USE_WIFI_AP
+#define USE_WIREGUARD
 
 // Arduino-specific feature flags
 #ifdef USE_ARDUINO
 #define USE_CAPTIVE_PORTAL
 #define USE_PROMETHEUS
-#define USE_WEBSERVER
-#define USE_WEBSERVER_PORT 80  // NOLINT
 #define USE_WIFI_WPA2_EAP
 #endif
 
@@ -96,6 +109,8 @@
 #define USE_SPEAKER
 #define USE_SPI
 #define USE_VOICE_ASSISTANT
+#define USE_WEBSERVER
+#define USE_WEBSERVER_PORT 80  // NOLINT
 #define USE_WIFI_11KV_SUPPORT
 
 #ifdef USE_ARDUINO
@@ -132,6 +147,8 @@
 #define USE_SHD_FIRMWARE_DATA \
   {}
 
+#define USE_WEBSERVER
+#define USE_WEBSERVER_PORT 80  // NOLINT
 #endif
 
 #ifdef USE_RP2040
@@ -143,6 +160,8 @@
 
 #ifdef USE_LIBRETINY
 #define USE_SOCKET_IMPL_LWIP_SOCKETS
+#define USE_WEBSERVER
+#define USE_WEBSERVER_PORT 80  // NOLINT
 #endif
 
 #ifdef USE_HOST
@@ -150,6 +169,7 @@
 #endif
 
 // Disabled feature flags
-// #define USE_BSEC  // Requires a library with proprietary license.
+// #define USE_BSEC   // Requires a library with proprietary license
+// #define USE_BSEC2  // Requires a library with proprietary license
 
 #define USE_DASHBOARD_IMPORT

@@ -70,6 +70,13 @@ bool ESP32Can::setup_internal() {
   static uint8_t next_controller_id = 0;
   twai_general_config_t g_config =
       TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t) this->tx_, (gpio_num_t) this->rx_, TWAI_MODE_NORMAL);
+  if (this->tx_queue_len_.has_value()) {
+    g_config.tx_queue_len = this->tx_queue_len_.value();
+  }
+  if (this->rx_queue_len_.has_value()) {
+    g_config.rx_queue_len = this->rx_queue_len_.value();
+  }
+
   twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
   twai_timing_config_t t_config;
 
@@ -120,6 +127,7 @@ canbus::Error ESP32Can::send_message(struct canbus::CanFrame *frame) {
       .flags = flags,
       .identifier = frame->can_id,
       .data_length_code = frame->can_data_length_code,
+      .data = {},  // to suppress warning, data is initialized properly below
   };
   if (!frame->remote_transmission_request) {
     memcpy(message.data, frame->data, frame->can_data_length_code);
